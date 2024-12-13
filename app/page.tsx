@@ -53,12 +53,12 @@ export default function Home() {
       setMessages([...newMessages, assistantMessage])
     } catch (error) {
       console.error('Error:', error)
-      // 显示错误消息
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
       setMessages([
         ...newMessages,
         {
           role: 'assistant' as const,
-          content: '抱歉，发生了一些错误。请稍后再试。'
+          content: `抱歉，发生了一些错误。错误信息：${errorData.details || errorData.error}`
         }
       ])
     } finally {
