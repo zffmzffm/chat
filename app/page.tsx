@@ -2,8 +2,14 @@
 
 import { useState, useRef, useEffect } from 'react'
 
+// 定义消息类型
+type Message = {
+  role: 'user' | 'assistant'
+  content: string
+}
+
 export default function Home() {
-  const [messages, setMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -19,8 +25,8 @@ export default function Home() {
   const handleSubmit = async () => {
     if (!input.trim() || isLoading) return
 
-    const userMessage = { role: 'user', content: input }
-    const newMessages = [...messages, userMessage]
+    const userMessage: Message = { role: 'user', content: input }
+    const newMessages: Message[] = [...messages, userMessage]
     setMessages(newMessages)
     setInput('')
     setIsLoading(true)
@@ -39,7 +45,7 @@ export default function Home() {
       }
 
       const data = await response.json()
-      const assistantMessage = {
+      const assistantMessage: Message = {
         role: 'assistant',
         content: data.choices[0].message.content
       }
@@ -51,7 +57,7 @@ export default function Home() {
       setMessages([
         ...newMessages,
         {
-          role: 'assistant',
+          role: 'assistant' as const,
           content: '抱歉，发生了一些错误。请稍后再试。'
         }
       ])
