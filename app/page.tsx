@@ -41,7 +41,8 @@ export default function Home() {
       })
 
       if (!response.ok) {
-        throw new Error('API 请求失败')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'API 请求失败')
       }
 
       const data = await response.json()
@@ -53,12 +54,11 @@ export default function Home() {
       setMessages([...newMessages, assistantMessage])
     } catch (error) {
       console.error('Error:', error)
-      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
       setMessages([
         ...newMessages,
         {
           role: 'assistant' as const,
-          content: `抱歉，发生了一些错误。错误信息：${errorData.details || errorData.error}`
+          content: `抱歉，发生了一些错误。错误信息：${error instanceof Error ? error.message : '未知错误'}`
         }
       ])
     } finally {
